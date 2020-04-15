@@ -1,3 +1,4 @@
+import {activityType} from "../mock/data.js";
 
 export const createEventItemTemplate = (event) => {
 
@@ -11,7 +12,7 @@ export const createEventItemTemplate = (event) => {
   const getActiveOffers = offers.filter((it) => it.isActive).slice(0, 2);
 
   const getCourse = (eventType) => {
-    if ((eventType === `Check-in`) || (eventType === `Sightseeing`) || (eventType === `Restaurant`)) {
+    if ((eventType === activityType.CHECKIN) || (eventType === activityType.SIGHTSEEING) || (eventType === activityType.RESTAURANT)) {
       return `in`;
     } else {
       return `to`;

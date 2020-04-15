@@ -1,4 +1,4 @@
-import {PICTURE_COUNT} from "../data.js";
+import {countedElement} from "../mock/data.js";
 
 const getEventTypeItems = (typesArr) => {
   return typesArr.map((type) => {
@@ -120,7 +120,7 @@ export const createEventFormTempalte = (event) => {
 
         <div class="event__photos-container">
           <div class="event__photos-tape">
-            ${getEventPictures(PICTURE_COUNT, pickture)}
+            ${getEventPictures(countedElement.PICTURE, pickture)}
           </div>
         </div>
       </section>

@@ -1,4 +1,4 @@
-import {EVENT_COUNT} from "./data.js";
+
 import {renderTemplate} from "./utils.js";
 import {createDestinationAndPriceTemplate} from "./components/destintaion-and-price.js";
 import {createMenuTemplate} from "./components/menu.js";
@@ -9,6 +9,7 @@ import {createTripDaysTemplate} from "./components/trip-days.js";
 import {createEventItemTemplate} from "./components/event-item.js";
 import {generateDate} from "./mock/trip-days.js";
 import {generateEvents, generateEvent} from "./mock/event-item.js";
+import {countedElement} from "./mock/data.js";
 
 const pageHeaderElement = document.querySelector(`.page-header`);
 const pageMain = document.querySelector(`.page-main`);
@@ -19,7 +20,7 @@ const tripEventsElement = pageMain.querySelector(`.trip-events`);
 
 const date = generateDate();
 const event = generateEvent();
-const events = generateEvents(EVENT_COUNT);
+const events = generateEvents(countedElement.EVENT);
 
 renderTemplate(tripMainElement, createDestinationAndPriceTemplate(), `afterbegin`);
 renderTemplate(tripMainControlsFirstHeaderElement, createMenuTemplate(), `afterend`);
