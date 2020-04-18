@@ -10,6 +10,12 @@ export const activityType = {
   RESTAURANT: `Restaurant`,
 };
 
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  AFTEREND: `afterend`,
+  BEFOREEND: `beforeend`,
+};
+
 export const EVENT_TYPES = [
   `Taxi`,
   `Bus`,

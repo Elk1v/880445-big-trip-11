@@ -1,6 +1,6 @@
+import {createElement} from "../utils.js";
 
 const createTripDaysTemplate = (date) => {
-
   const {dateTime, dayCounter, day} = date;
 
   return (
@@ -17,4 +17,27 @@ const createTripDaysTemplate = (date) => {
   );
 };
 
-export {createTripDaysTemplate};
+export default class Day {
+  constructor(days) {
+    this._days = days;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripDaysTemplate(this._days);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+

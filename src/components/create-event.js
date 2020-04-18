@@ -1,3 +1,4 @@
+import {createElement} from "../utils.js";
 import {countedElement} from "../mock/data.js";
 
 const getEventTypeItems = (typesArr) => {
@@ -40,8 +41,8 @@ const getEventPictures = (count, picktureSrc) => {
       .join(``);
 };
 
-export const createEventFormTempalte = (event) => {
-  const {eventTypes, offers, pickture, description} = event;
+const createEventFormTempalte = (eventItem) => {
+  const {eventTypes, offers, pickture, description} = eventItem;
   const transferTypes = eventTypes.slice(0, 7);
   const activityTypes = eventTypes.slice(7);
 
@@ -129,3 +130,27 @@ export const createEventFormTempalte = (event) => {
       `
   );
 };
+
+export default class CreatedEvent {
+  constructor(eventItem) {
+    this._eventItem = eventItem;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventFormTempalte(this._eventItem);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,8 +1,9 @@
 import {activityType} from "../mock/data.js";
+import {createElement} from "../utils.js";
 
-export const createEventItemTemplate = (event) => {
+const createEventItemTemplate = (eventItem) => {
 
-  const {randomEventType, city, offers} = event;
+  const {randomEventType, city, offers} = eventItem;
 
   const eventIcon = randomEventType.toLowerCase();
   const eventStartTime = `10:30`; // временно
@@ -71,3 +72,27 @@ export const createEventItemTemplate = (event) => {
       `
   );
 };
+
+export default class EventItem {
+  constructor(eventItem) {
+    this._eventItem = eventItem;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventItemTemplate(this._eventItem);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
