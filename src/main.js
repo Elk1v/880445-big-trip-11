@@ -1,14 +1,22 @@
-import {EVENT_COUNT} from "./data.js";
+
+import TripInfoComponent from "./components/destintaion-and-price.js";
+import MenuComponent from "./components/menu.js";
+import FilterComponent from "./components/filter.js";
+import SortFormComponent from "./components/sort-form.js";
+// import CreatedEventComponent from "./components/create-event.js"; использовать позже
+import EditedEventComponent from "./components/edit-event.js";
+import TripDaysComponent from "./components/trip-days.js";
+import EventItemComponent from "./components/event-item.js";
 import {renderTemplate} from "./utils.js";
-import {createDestinationAndPriceTemplate} from "./components/destintaion-and-price.js";
-import {createMenuTemplate} from "./components/menu.js";
-import {createFilterTemplate} from "./components/filter.js";
-import {createSortFormTemplate} from "./components/sort-form.js";
-import {createEventFormTempalte} from "./components/event-form.js";
-import {createTripDaysTemplate} from "./components/trip-days.js";
-import {createEventItemTemplate} from "./components/event-item.js";
 import {generateDate} from "./mock/trip-days.js";
-import {generateEvents, generateEvent} from "./mock/event-item.js";
+import {generateEventItems} from "./mock/event-item.js";
+import {countedElement} from "./mock/data.js";
+import {RenderPosition} from "./mock/data.js";
+
+const escButton = {// перенести в Data
+  ESC: `Esc`,
+  ESCAPE: `Escape`,
+};
 
 const pageHeaderElement = document.querySelector(`.page-header`);
 const pageMain = document.querySelector(`.page-main`);
@@ -18,17 +26,49 @@ const tripMainControlsSecondHeaderElement = tripMainElement.querySelector(`.trip
 const tripEventsElement = pageMain.querySelector(`.trip-events`);
 
 const date = generateDate();
-const event = generateEvent();
-const events = generateEvents(EVENT_COUNT);
+const eventItems = generateEventItems(countedElement.EVENT);
 
-renderTemplate(tripMainElement, createDestinationAndPriceTemplate(), `afterbegin`);
-renderTemplate(tripMainControlsFirstHeaderElement, createMenuTemplate(), `afterend`);
-renderTemplate(tripMainControlsSecondHeaderElement, createFilterTemplate(), `afterend`);
-renderTemplate(tripEventsElement, createSortFormTemplate(), `beforeend`);
-renderTemplate(tripEventsElement, createEventFormTempalte(event), `beforeend`);
-renderTemplate(tripEventsElement, createTripDaysTemplate(date), `beforeend`);
+const renderEvent = (tripEventsListElement, eventItem) => {
+  const eventEditComponent = new EditedEventComponent();
+
+  const replaceEventToEdit = () => {
+    tripEventsListElement.replaceChild(eventEditComponent.getElement(), eventItemComponent.getElement());
+  };
+
+  const replaceEditToEvent = () => {
+    tripEventsListElement.replaceChild(eventItemComponent.getElement(), eventEditComponent.getElement());
+  };
+
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === escButton.ESCAPE || evt.key === escButton.ESC;
+
+    if (isEscKey) {
+      replaceEditToEvent();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  const eventItemComponent = new EventItemComponent(eventItem);
+
+  const rollupBtn = eventItemComponent.getElement().querySelector(`.event__rollup-btn`);
+  rollupBtn.addEventListener(`click`, () => {
+    replaceEventToEdit();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
+
+  renderTemplate(tripEventsListElement, eventItemComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
+renderTemplate(tripMainElement, new TripInfoComponent().getElement(), RenderPosition.AFTERBEGIN);
+renderTemplate(tripMainControlsFirstHeaderElement, new MenuComponent().getElement(), RenderPosition.AFTEREND);
+renderTemplate(tripMainControlsSecondHeaderElement, new FilterComponent().getElement(), RenderPosition.AFTEREND);
+renderTemplate(tripEventsElement, new SortFormComponent().getElement(), RenderPosition.BEFOREEND);
+
+renderTemplate(tripEventsElement, new TripDaysComponent(date).getElement(), RenderPosition.BEFOREEND);
 
 const tripEventsListElement = tripEventsElement.querySelector(`.trip-events__list`);
 
-events.slice(1, 10)
-.forEach((eventItem) => renderTemplate(tripEventsListElement, createEventItemTemplate(eventItem), `beforeend`));
+eventItems.slice(1, 10)
+.forEach((eventItem) => {
+  renderEvent(tripEventsListElement, eventItem);
+});

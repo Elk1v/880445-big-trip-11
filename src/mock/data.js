@@ -1,10 +1,33 @@
-export const EVENT_COUNT = 25;
 
-export const PICTURE_COUNT = 5;
+export const countedElement = {
+  EVENT: 25,
+  PICTURE: 5,
+};
 
-export const EVENT_TYPES = [`Taxi`, `Bus`, `Train`, `Ship`,
-  `Transport`, `Drive`, `Flight`, `Check-in`,
-  `Sightseeing`, `Restaurant`];
+export const activityType = {
+  CHECKIN: `Check-in`,
+  SIGHTSEEING: `Sightseeing`,
+  RESTAURANT: `Restaurant`,
+};
+
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  AFTEREND: `afterend`,
+  BEFOREEND: `beforeend`,
+};
+
+export const EVENT_TYPES = [
+  `Taxi`,
+  `Bus`,
+  `Train`,
+  `Ship`,
+  `Transport`,
+  `Drive`,
+  `Flight`,
+  `Check-in`,
+  `Sightseeing`,
+  `Restaurant`
+];
 
 export const CITIES = [
   `Amsterdam`, `Chamonix`, `Geneva`, `SaintPetersburg`

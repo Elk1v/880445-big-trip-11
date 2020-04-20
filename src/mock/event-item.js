@@ -1,8 +1,8 @@
 import {getRandomArrayItem} from "../utils.js";
-import {PICTURE, CITIES, EVENT_TYPES} from "../data.js";
-import {getOffersList, eventDescriptions} from "../data.js";
+import {PICTURE, CITIES, EVENT_TYPES} from "./data.js";
+import {getOffersList, eventDescriptions} from "./data.js";
 
-const generateEvent = () => {
+const generateEventItem = () => {
   return {
     eventTypes: EVENT_TYPES,
     randomEventType: getRandomArrayItem(EVENT_TYPES),
@@ -15,12 +15,12 @@ const generateEvent = () => {
   };
 };
 
-const generateEvents = (count) => {
+const generateEventItems = (count) => {
   return new Array(count)
       .fill(``)
-      .map(generateEvent);
+      .map(generateEventItem);
 };
 
-export {generateEvents, generateEvent};
+export {generateEventItem, generateEventItems};
 
 
