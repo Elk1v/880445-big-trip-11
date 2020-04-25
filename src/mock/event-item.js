@@ -1,6 +1,6 @@
-import {getRandomArrayItem} from "../utils.js";
-import {PICTURE, CITIES, EVENT_TYPES} from "./data.js";
-import {getOffersList, eventDescriptions} from "./data.js";
+import {getRandomArrayItem} from "../utils/common";
+import {PICTURE, CITIES, EVENT_TYPES} from "./data";
+import {getOffersList, eventDescriptions} from "./data";
 
 const generateEventItem = () => {
   return {

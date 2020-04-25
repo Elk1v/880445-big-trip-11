@@ -1,5 +1,4 @@
-import {createElement} from "../utils.js";
-import {countedElement} from "../mock/data.js";
+import {countedElement} from "../../mock/data";
 
 const getEventTypeItems = (typesArr) => {
   return typesArr.map((type) => {
@@ -33,16 +32,16 @@ const getAvailableOffers = (arr) => {
   }).join(` `);
 };
 
-const getEventPictures = (count, picktureSrc) => {
+const getEventPictures = (count, pictureSrc) => {
   return new Array(count)
       .fill(
-          `<img class="event__photo" src="${picktureSrc}" alt="Event photo"></img>`
+          `<img class="event__photo" src="${pictureSrc}" alt="Event photo"></img>`
       )
       .join(``);
 };
 
-const createEventFormTempalte = (eventItem) => {
-  const {eventTypes, offers, pickture, description} = eventItem;
+export const createEventFormTemplate = (eventItem) => {
+  const {eventTypes, offers, picture, description} = eventItem;
   const transferTypes = eventTypes.slice(0, 7);
   const activityTypes = eventTypes.slice(7);
 
@@ -121,7 +120,7 @@ const createEventFormTempalte = (eventItem) => {
 
         <div class="event__photos-container">
           <div class="event__photos-tape">
-            ${getEventPictures(countedElement.PICTURE, pickture)}
+            ${getEventPictures(countedElement.PICTURE, picture)}
           </div>
         </div>
       </section>
@@ -130,27 +129,3 @@ const createEventFormTempalte = (eventItem) => {
       `
   );
 };
-
-export default class CreatedEvent {
-  constructor(eventItem) {
-    this._eventItem = eventItem;
-
-    this._element = null;
-  }
-
-  getTemplate() {
-    return createEventFormTempalte(this._eventItem);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
-}
