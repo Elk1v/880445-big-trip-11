@@ -1,10 +1,10 @@
 
-export const countedElement = {
+export const CountedElement = {
   EVENT: 25,
   PICTURE: 5,
 };
 
-export const activityType = {
+export const ActivityType = {
   CHECKIN: `Check-in`,
   SIGHTSEEING: `Sightseeing`,
   RESTAURANT: `Restaurant`,
