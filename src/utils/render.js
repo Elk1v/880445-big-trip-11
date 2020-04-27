@@ -1,4 +1,4 @@
-import {RenderPosition} from "../mock/data.js";
+import {RenderPosition} from "../mock/data";
 
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
