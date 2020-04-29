@@ -1,54 +1,43 @@
-import EditedEventComponent from "../components/edit-event/edit-event";
-import EventItemComponent from "../components/event-item/event-item";
-import {render, replace} from "../utils/render";
-import {RenderPosition} from "../mock/data";
-import {onEscKeyDown} from "../utils/common";
+import PointController from "./point-controller";
 
-const TaskCount = {
-  FROM: 1,
-  TO: 10,
-};
+const renderEvents = (container, events, onDataChange) => {
+  return events.map((event) => {
+    const pointController = new PointController(container, onDataChange);
+    pointController.render(event);
 
-const renderEvent = (tripEventsListElement, eventItem) => {
-  const eventEditComponent = new EditedEventComponent();
-  const eventItemComponent = new EventItemComponent(eventItem);
-
-  const replaceEventToEdit = () => {
-    replace(eventEditComponent, eventItemComponent);
-  };
-
-  const replaceEditToEvent = () => {
-    replace(eventItemComponent, eventEditComponent);
-  };
-
-  eventItemComponent.setRollupBtnClickHandler(() => {
-    replaceEventToEdit();
-
-    document.addEventListener(`keydown`, (evt) => {
-      onEscKeyDown(evt, replaceEditToEvent);
-    });
+    return pointController;
   });
-
-  eventEditComponent.setRollupBtnClickHandler(() => {
-    replaceEditToEvent();
-  });
-
-  render(tripEventsListElement, eventItemComponent, RenderPosition.BEFOREEND);
-};
-
-const renderEvents = (events, container) => {
-  events.slice(TaskCount.FROM, TaskCount.TO)
-    .forEach((event) => {
-      renderEvent(container, event);
-    });
 };
 
 export default class TripController {
   constructor(container) {
     this._container = container;
+
+    this._events = [];
+
+    this._showedPointControllers = [];
+
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
+
   render(events) {
-    renderEvents(events, this._container);
+    this._events = events;
+
+    const allEvents = renderEvents(this._container, this._events, this._onDataChange);
+
+    this._showedPointControllers.concat(allEvents);
+  }
+
+  _onDataChange(oldData, newData) {
+    const index = this._tasks.findIndex((it) => it === oldData);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._tasks = [].concat(this._tasks.slice(0, index), newData, this._tasks.slice(index + 1));
+
+    this._showedPointControllers.render(this._events[index]);
   }
 }
