@@ -18,7 +18,7 @@ export default class PointController {
   }
 
   render(event) {
-    this._eventEditComponent = new EditedEventComponent();
+    this._eventEditComponent = new EditedEventComponent(event);
     this._eventItemComponent = new EventItemComponent(event);
 
     this._eventItemComponent.setRollupBtnClickHandler(() => {

@@ -30,13 +30,13 @@ export default class TripController {
   }
 
   _onDataChange(oldData, newData) {
-    const index = this._tasks.findIndex((it) => it === oldData);
+    const index = this._events.findIndex((it) => it === oldData);
 
     if (index === -1) {
       return;
     }
 
-    this._tasks = [].concat(this._tasks.slice(0, index), newData, this._tasks.slice(index + 1));
+    this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
 
     this._showedPointControllers.render(this._events[index]);
   }
