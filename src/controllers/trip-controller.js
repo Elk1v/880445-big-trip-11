@@ -1,56 +1,46 @@
-import EditedEventComponent from "../components/edit-event/edit-event";
-import EventItemComponent from "../components/event-item/event-item";
-import {render, replace} from "../utils/render";
-import {RenderPosition} from "../mock/data";
+import PointController from "./point-controller";
 
-const EscButton = {// перенести в Data
-  ESC: `Esc`,
-  ESCAPE: `Escape`,
-};
+const renderEvents = (container, events, onDataChange, onViewChange) => {
+  return events.map((event) => {
+    const pointController = new PointController(container, onDataChange, onViewChange);
+    pointController.render(event);
 
-const renderEvent = (tripEventsListElement, eventItem) => {
-  const eventEditComponent = new EditedEventComponent();
-
-  const replaceEventToEdit = () => {
-    replace(eventEditComponent, eventItemComponent);
-  };
-
-  const replaceEditToEvent = () => {
-    replace(eventItemComponent, eventEditComponent);
-  };
-
-  const onEscKeyDown = (evt) => {
-    const isEscKey = evt.key === EscButton.ESCAPE || evt.key === EscButton.ESC;
-
-    if (isEscKey) {
-      replaceEditToEvent();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
-
-  const eventItemComponent = new EventItemComponent(eventItem);
-
-  eventItemComponent.setRollupBtnClickHandler(() => {
-    replaceEventToEdit();
-    document.addEventListener(`keydown`, onEscKeyDown);
+    return pointController;
   });
-
-  render(tripEventsListElement, eventItemComponent, RenderPosition.BEFOREEND);
-};
-
-const renderEvents = (events, container) => {
-  events.slice(1, 10)
-    .forEach((event) => {
-      renderEvent(container, event);
-    });
 };
 
 export default class TripController {
   constructor(container) {
     this._container = container;
+
+    this._events = [];
+
+    this._showedPointControllers = [];
+
+    this._onDataChange = this._onDataChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
   }
 
+
   render(events) {
-    renderEvents(events, this._container);
+    this._events = events;
+    const allEvents = renderEvents(this._container, this._events, this._onDataChange, this._onViewChange);
+    this._showedPointControllers = this._showedPointControllers.concat(allEvents);
+  }
+
+  _onDataChange(oldData, newData) {
+    const index = this._events.findIndex((it) => it === oldData);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
+
+    this._showedPointControllers.render(this._events[index]);
+  }
+
+  _onViewChange() {
+    this._showedPointControllers.forEach((it) => it.setDefaultView());
   }
 }

@@ -8,3 +8,4 @@ export const getRandomArrayItem = (array) => {
 
   return array[randomIndex];
 };
+

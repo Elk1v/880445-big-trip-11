@@ -1,5 +1,5 @@
 import AbstractComponent from "../abstract-component";
-import {createEventItemTemplate} from "./event-item-tpl.js";
+import {createEventItemTemplate} from "./event-item-tpl";
 
 export default class EventItem extends AbstractComponent {
   constructor(eventItem) {

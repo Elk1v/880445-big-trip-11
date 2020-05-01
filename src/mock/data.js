@@ -1,6 +1,6 @@
 
 export const CountedElement = {
-  EVENT: 25,
+  EVENT: 5,
   PICTURE: 5,
 };
 
