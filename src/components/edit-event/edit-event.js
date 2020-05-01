@@ -6,9 +6,12 @@ export default class EditedEvent extends AbstractSmartComponent {
     super();
 
     this._eventItem = eventItem;
+
     this._saveHandler = null;
     this._rollupHandler = null;
     this._favoriteHandler = null;
+
+    this._eventType = this._eventItem.randomEventType;
 
     this._subscribeOnEvents();
   }
@@ -25,6 +28,13 @@ export default class EditedEvent extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+  }
+
+  reset() {
+    this._eventItem = this._eventItem;
+    this._eventType = this._eventType;
+
+    this.rerender();
   }
 
   setSaveBtnClickHandler(handler) {

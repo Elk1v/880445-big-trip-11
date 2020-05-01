@@ -11,7 +11,8 @@ const generateEventItem = () => {
       .slice(0, 5)
       .join(``),
     offers: getOffersList(),
-    pickture: PICTURE,
+    picture: PICTURE,
+    isFavorite: Math.random() > 0.5,
   };
 };
 
