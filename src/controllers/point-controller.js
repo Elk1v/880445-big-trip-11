@@ -1,6 +1,6 @@
 import EditedEventComponent from "../components/edit-event/edit-event";
 import EventItemComponent from "../components/event-item/event-item";
-import {render, replace} from "../utils/render";
+import {render, replace, remove} from "../utils/render";
 import {RenderPosition} from "../mock/data";
 import {EscButton} from "../consts";
 
@@ -63,6 +63,12 @@ export default class PointController {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceEditToEvent();
     }
+  }
+
+  destroy() {
+    remove(this._eventItemComponent);
+    remove(this._eventEditComponent);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _replaceEditToEvent() {

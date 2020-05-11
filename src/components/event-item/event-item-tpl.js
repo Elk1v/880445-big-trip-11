@@ -1,15 +1,34 @@
 import {ActivityType} from "../../mock/data";
+import moment from "moment";
 
 export const createEventItemTemplate = (eventItem) => {
+  const {randomEventType, city, offers, dateFrom, dateTo} = eventItem;
 
-  const {randomEventType, city, offers} = eventItem;
-
+  const eventDuration = moment(dateTo).diff(dateFrom, `minutes`);
+  const formatedDateFrom = moment(dateFrom).format(`hh:mm`);
+  const formatedDateTo = moment(dateTo).format(`hh:mm`);
   const eventIcon = randomEventType.toLowerCase();
-  const eventStartTime = `10:30`; // временно
-  const eventEndTime = `11:01`;
-  const eventDuration = `31M`;
-
   const getActiveOffers = offers.filter((it) => it.isActive).slice(0, 2);
+
+  const formatDuration = (inMinutes) => {
+
+    const duration = moment.utc(moment.duration(inMinutes, `minutes`).asMilliseconds());
+    const lessThenDayDuration = moment.utc(moment.duration(24, `hours`).asMilliseconds());
+    const lessThenHourDuration = moment.utc(moment.duration(60, `minutes`).asMilliseconds());
+
+    /* const duration = moment.utc(moment.duration(inMinutes, `minutes`).asMilliseconds()).format(`DDDD[D] HH[H] mm[M]`); */
+
+    if ((duration < lessThenDayDuration) && (duration < lessThenHourDuration)) { /*(duration < lessThenDayDuration)*/
+      const fduration = moment.utc(moment.duration(inMinutes, `minutes`).asMilliseconds()).format(`mm[M]`);
+      return fduration;
+    } else if (duration < lessThenDayDuration) {
+      const fduration = moment.utc(moment.duration(inMinutes, `minutes`).asMilliseconds()).format(`HH[H] mm[M]`);
+      return fduration;
+    } else {
+      const fduration = moment.utc(moment.duration(inMinutes, `minutes`).asMilliseconds()).format(`DDDD[D] HH[H] mm[M]`);
+      return fduration;
+    }
+  };
 
   const getCourse = (eventType) => {
     if ((eventType === ActivityType.CHECKIN) || (eventType === ActivityType.SIGHTSEEING) || (eventType === ActivityType.RESTAURANT)) {
@@ -46,11 +65,11 @@ export const createEventItemTemplate = (eventItem) => {
     
           <div class="event__schedule">
             <p class="event__time">
-              <time class="event__start-time" datetime="2019-03-18T10:30">${eventStartTime}</time>
+              <time class="event__start-time" datetime="${dateFrom}">${formatedDateFrom}</time>
               &mdash;
-              <time class="event__end-time" datetime="2019-03-18T11:00">${eventEndTime}</time>
+              <time class="event__end-time" datetime="${dateTo}">${formatedDateTo}</time>
             </p>
-            <p class="event__duration">${eventDuration}</p>
+            <p class="event__duration">${formatDuration(eventDuration)}</p>
           </div>
     
           <p class="event__price">
