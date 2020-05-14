@@ -37,3 +37,8 @@ filterController.render();
 const tripController = new TripController(tripEventsListElement, pointModel);
 tripController.render(eventItems);
 
+document.querySelector(`.trip-main__event-add-btn`)
+  .addEventListener(`click`, () => {
+    tripController.createPoint();
+  });
+

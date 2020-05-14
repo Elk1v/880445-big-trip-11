@@ -2,12 +2,11 @@ import {ActivityType} from "../../mock/data";
 import moment from "moment";
 
 export const createEventItemTemplate = (eventItem) => {
-  const {randomEventType, city, offers, dateFrom, dateTo} = eventItem;
-
+  const {eventType, destination, offers, dateFrom, dateTo} = eventItem;
   const eventDuration = moment(dateTo).diff(dateFrom, `minutes`);
   const formatedDateFrom = moment(dateFrom).format(`hh:mm`);
   const formatedDateTo = moment(dateTo).format(`hh:mm`);
-  const eventIcon = randomEventType.toLowerCase();
+  const eventIcon = eventType.toLowerCase();
   const getActiveOffers = offers.filter((it) => it.isActive).slice(0, 2);
 
   const formatDuration = (inMinutes) => {
@@ -16,9 +15,7 @@ export const createEventItemTemplate = (eventItem) => {
     const lessThenDayDuration = moment.utc(moment.duration(24, `hours`).asMilliseconds());
     const lessThenHourDuration = moment.utc(moment.duration(60, `minutes`).asMilliseconds());
 
-    /* const duration = moment.utc(moment.duration(inMinutes, `minutes`).asMilliseconds()).format(`DDDD[D] HH[H] mm[M]`); */
-
-    if ((duration < lessThenDayDuration) && (duration < lessThenHourDuration)) { /*(duration < lessThenDayDuration)*/
+    if ((duration < lessThenDayDuration) && (duration < lessThenHourDuration)) {
       const fduration = moment.utc(moment.duration(inMinutes, `minutes`).asMilliseconds()).format(`mm[M]`);
       return fduration;
     } else if (duration < lessThenDayDuration) {
@@ -30,8 +27,8 @@ export const createEventItemTemplate = (eventItem) => {
     }
   };
 
-  const getCourse = (eventType) => {
-    if ((eventType === ActivityType.CHECKIN) || (eventType === ActivityType.SIGHTSEEING) || (eventType === ActivityType.RESTAURANT)) {
+  const getCourse = (type) => {
+    if ((type === ActivityType.CHECKIN) || (type === ActivityType.SIGHTSEEING) || (type === ActivityType.RESTAURANT)) {
       return `in`;
     } else {
       return `to`;
@@ -39,12 +36,12 @@ export const createEventItemTemplate = (eventItem) => {
   };
 
   const getOffers = (arr) => {
-    return arr.map((it) => {
+    return arr.map((offer) => {
       return (
         `<li class="event__offer">
-            <span class="event__offer-title">${it.action}</span>
+            <span class="event__offer-title">${offer.action}</span>
             &plus;
-            &euro;&nbsp;<span class="event__offer-price">${it.price}</span>
+            &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
           </li>`
       );
     }).join(`\n`);
@@ -61,7 +58,7 @@ export const createEventItemTemplate = (eventItem) => {
           <div class="event__type">
             <img class="event__type-icon" width="42" height="42" src="img/icons/${eventIcon}.png" alt="Event type icon">
           </div>
-          <h3 class="event__title">${randomEventType} ${getCourse(randomEventType)} ${city}</h3>
+          <h3 class="event__title">${eventType} ${getCourse(eventType)} ${destination.name}</h3>
     
           <div class="event__schedule">
             <p class="event__time">

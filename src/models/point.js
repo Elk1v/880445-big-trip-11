@@ -49,13 +49,16 @@ export default class Points {
       return false;
     }
 
-    this._points = [].concat(this._points.slice(0, index), this._point.slice(index + 1));
+    this._points = [].concat(this._points.slice(0, index), this._points.slice(index + 1));
+
+    this._callHandlers(this._dataChangeHandlers);
 
     return true;
   }
 
   addPoint(point) {
     this._points = [].concat(point, this._points);
+    this._callHandlers(this._dataChangeHandlers);
   }
 
   setFilterChangeHandler(handler) {
@@ -65,5 +68,4 @@ export default class Points {
   _callHandlers(handlers) {
     handlers.forEach((handler) => handler());
   }
-
 }

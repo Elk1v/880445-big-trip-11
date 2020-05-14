@@ -1,4 +1,6 @@
 import {ActivityType} from "../../mock/data";
+import {EVENT_TYPES, CITIES, getOffersList} from "../../mock/data";
+import moment from "moment";
 
 const getEventTypeItems = (typesArr) => {
   return typesArr.map((type) => {
@@ -40,20 +42,24 @@ const getCourse = (eventType) => {
   }
 };
 
-export const editEventTemplate = (eventItem, eventType) => {
-  const {eventTypes, randomEventType, offers, city, isFavorite} = eventItem;
+export const editEventTemplate = (eventItem, options = {}) => {
+  const {eventType, offers, destination, isFavorite, dateFrom, dateTo} = options;
+  const getActiveOffers = offers.filter((it) => it.isActive).slice(0, 2);
 
-  const transferTypes = eventTypes.slice(0, 7);
-  const activityTypes = eventTypes.slice(7);
-  
-  const type = eventType === undefined ? randomEventType : eventType;
+  const transferTypes = EVENT_TYPES.slice(0, 7);
+  const activityTypes = EVENT_TYPES.slice(7);
+  const eventIcon = eventType.toLowerCase();
 
-  const eventIcon = type.toLowerCase();
+  const formatedDateFrom = moment(dateFrom).format(`DD/MM/YY hh:mm`);
+  const formatedDateTo = moment(dateTo).format(`DD/MM/YY hh:mm`);
 
+  const getTotalOffersPrice = getActiveOffers.reduce((prev, cur) => {
+    return prev + cur.price;
+  }, 0);
 
   return (`
     <li class="trip-events__item">
-    <form class="event  event--edit" action="#" method="post">
+    <form class="event  event--edit" action="#" method="get">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -77,13 +83,13 @@ export const editEventTemplate = (eventItem, eventType) => {
   
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-          ${type} ${getCourse(type)}
+          ${eventType} ${getCourse(eventType)}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+          ${CITIES.map((city) =>
+      `<option value=${city}></option>`
+    ).join(` `)}
           </datalist>
         </div>
   
@@ -91,12 +97,12 @@ export const editEventTemplate = (eventItem, eventType) => {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 12:25">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatedDateFrom}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 13:35">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatedDateTo}">
         </div>
   
         <div class="event__field-group  event__field-group--price">
@@ -104,7 +110,7 @@ export const editEventTemplate = (eventItem, eventType) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="160">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${getTotalOffersPrice}">
         </div>
   
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -135,4 +141,20 @@ export const editEventTemplate = (eventItem, eventType) => {
     </form>
   </li>
       `);
+};
+
+export const parseFormData = (formData) => {
+  const getDateFrom = formData.get(`event-start-time`);
+  const getDateTo = formData.get(`event-end-time`);
+
+  return {
+    eventType: formData.get(`event-type`),
+    city: formData.get(`event-destination`),
+    price: formData.get(`event-price`),
+    dateFrom: moment(getDateFrom),
+    dateTo: moment(getDateTo),
+    offers: getOffersList(),
+    isFavorite: formData.get(`event-favorite`) ? true : false,
+    basePrice: formData.get(`event-price`),
+  };
 };

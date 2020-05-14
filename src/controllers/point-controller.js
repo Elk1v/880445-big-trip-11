@@ -1,14 +1,30 @@
-import EditedEventComponent from "../components/edit-event/edit-event";
-import EventItemComponent from "../components/event-item/event-item";
+import EditedPointComponent from "../components/edit-event/edit-event";
+import PointItemComponent from "../components/event-item/event-item";
 import {render, replace, remove} from "../utils/render";
-import {RenderPosition} from "../mock/data";
+import {RenderPosition, getOffersList} from "../mock/data";
 import {EscButton} from "../consts";
+import moment from "moment";
 
-const Mode = {
+export const Mode = {
   DEFAULT: `default`,
   EDIT: `edit`,
+  ADDING: `adding`,
 };
 
+export const EmptyPoint = {
+  id: String(Date.now() + Math.random()),
+  eventType: `Taxi`,
+  offers: getOffersList(),
+  basePrice: 0,
+  destination: {
+    name: ``,
+    description: ``,
+    picture: ``,
+  },
+  isFavorite: false,
+  dateFrom: moment(),
+  dateTo: moment(),
+};
 export default class PointController {
   constructor(container, onDataChange, onViewChange) {
     this._container = container;
@@ -20,67 +36,82 @@ export default class PointController {
 
     this._mode = Mode.DEFAULT;
 
-    this._eventEditComponent = null;
-    this._eventItemComponent = null;
+    this._pointEditComponent = null;
+    this._pointItemComponent = null;
   }
 
-  render(event) {
+  render(point, mode) {
 
-    const oldEventItemComponent = this._eventItemComponent;
-    const oldEventEditComponent = this._eventEditComponent;
-    this._eventEditComponent = new EditedEventComponent(event);
-    this._eventItemComponent = new EventItemComponent(event);
+    const oldPointItemComponent = this._pointItemComponent;
+    const oldPointEditComponent = this._pointEditComponent;
+    this._mode = mode;
+    this._pointEditComponent = new EditedPointComponent(point);
+    this._pointItemComponent = new PointItemComponent(point);
 
-    this._eventItemComponent.setRollupBtnClickHandler(() => {
-      this._replaceEventToEdit();
+    this._pointItemComponent.setRollupBtnClickHandler(() => {
+      this._replacePointToEdit();
 
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    this._eventEditComponent.setRollupBtnClickHandler(() => {
-      this._replaceEditToEvent();
+    this._pointEditComponent.setRollupBtnClickHandler(() => {
+      this.setDefaultView();
     });
 
-    this._eventEditComponent.setSaveBtnClickHandler((evt) => {
+    this._pointEditComponent.setSaveBtnClickHandler((evt) => {
       evt.preventDefault();
-      this._replaceEditToEvent();
+      const data = this._pointEditComponent.getData();
+      this._onDataChange(this, point, data);
     });
 
-    this._eventEditComponent.setFavoriteBtnClickHandler(() => {
-      this._onDataChange(this, event, Object.assign({}, event, {
-        isFavorite: !event.isFavorite,
-      }));
-    });
-    if (oldEventItemComponent && oldEventEditComponent) {
-      replace(this._eventItemComponent, oldEventItemComponent);
-      replace(this._eventEditComponentm, oldEventEditComponent);
-    } else {
-      render(this._container, this._eventItemComponent, RenderPosition.BEFOREEND);
+    this._pointEditComponent.setDeleteBtnClickHandler(() => this._onDataChange(this, point, null));
+
+    switch (mode) {
+      case Mode.DEFAULT:
+        if (oldPointItemComponent && oldPointEditComponent) {
+          replace(this._pointItemComponent, oldPointItemComponent);
+          replace(this._pointEditComponentm, oldPointEditComponent);
+        } else {
+          render(this._container, this._pointItemComponent, RenderPosition.BEFOREEND);
+        }
+        break;
+      case Mode.ADDING:
+        if (oldPointItemComponent && oldPointEditComponent) {
+          remove(oldPointItemComponent);
+          remove(oldPointEditComponent);
+        }
+        document.addEventListener(`keydown`, this._onEscKeyDown);
+        render(this._container, this._pointEditComponent, RenderPosition.AFTERBEGIN);
+        break;
     }
   }
 
+
   setDefaultView() {
     if (this._mode !== Mode.DEFAULT) {
-      this._replaceEditToEvent();
+      this._replaceEditToPoint();
     }
   }
 
   destroy() {
-    remove(this._eventItemComponent);
-    remove(this._eventEditComponent);
+    remove(this._pointItemComponent);
+    remove(this._pointEditComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
-  _replaceEditToEvent() {
+  _replaceEditToPoint() {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
-    this._eventEditComponent.reset();
-    replace(this._eventItemComponent, this._eventEditComponent);
+    this._pointEditComponent.reset();
+    if (document.contains(this._pointEditComponent.getElement())) {
+      replace(this._pointItemComponent, this._pointEditComponent);
+    }
+
     this._mode = Mode.DEFAULT;
   }
 
-  _replaceEventToEdit() {
+  _replacePointToEdit() {
     this._onViewChange();
-    replace(this._eventEditComponent, this._eventItemComponent);
+    replace(this._pointEditComponent, this._pointItemComponent);
     this._mode = Mode.EDIT;
   }
 
@@ -88,7 +119,7 @@ export default class PointController {
     const isEscKey = evt.key === EscButton.ESCAPE || evt.key === EscButton.ESC;
 
     if (isEscKey) {
-      this._replaceEditToEvent();
+      this._replaceEditToPoint();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
   }

@@ -1,9 +1,18 @@
 import moment from "moment";
 import momentRandom from "moment-random";
-
 import {getRandomArrayItem} from "../utils/common";
 import {PICTURE, CITIES, EVENT_TYPES} from "./data";
 import {getOffersList, eventDescriptions} from "./data";
+
+const getDestinationInfo = () =>{
+  return {
+    name: getRandomArrayItem(CITIES),
+    description: eventDescriptions.sort(() => Math.random() - Math.random())
+    .slice(0, 5)
+    .join(``),
+    picture: PICTURE,
+  };
+};
 
 const DateRange = {
   FROM: `2020/01/01 00:00:00`,
@@ -18,14 +27,10 @@ export const generateEventItem = () => {
 
   return {
     id: String(new Date() + Math.random()),
-    eventTypes: EVENT_TYPES,
-    randomEventType: getRandomArrayItem(EVENT_TYPES),
-    city: getRandomArrayItem(CITIES),
-    description: eventDescriptions.sort(() => Math.random() - Math.random())
-      .slice(0, 5)
-      .join(``),
+    eventType: getRandomArrayItem(EVENT_TYPES),
     offers: getOffersList(),
-    picture: PICTURE,
+    basePrice: Math.floor(Math.random() * 100),
+    destination: getDestinationInfo(),
     isFavorite: Math.random() > 0.5,
     dateFrom: moment.utc(moment(isDateFrom)),
     dateTo: moment.utc(moment(isDateTo)),
